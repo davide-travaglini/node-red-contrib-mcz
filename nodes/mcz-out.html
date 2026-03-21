@@ -13,14 +13,14 @@
             payloadType: { value: 'msg' },
             fixedValue: { value: '' }
         },
-        label: function() {
+        label: function () {
             if (this.name) return this.name;
             const cfgNode = RED.nodes.node(this.stoveConfig);
             return cfgNode ? cfgNode.label() : 'MCZ Out';
         },
         paletteLabel: 'MCZ Out',
-        oneditprepare: function() {
-            $("#node-input-payloadType").on("change", function() {
+        oneditprepare: function () {
+            $("#node-input-payloadType").on("change", function () {
                 if ($(this).val() === "fixed") {
                     $("#row-fixed-value").show();
                 } else {
@@ -91,6 +91,7 @@
             <code>{ "command": "Power", "value": 1 }</code><br/>
             Available commands: <code>Power, Temperature, Power_Level, Fan_State, DuctedFan1, DuctedFan2, Eco_Mode, Silent_Mode, Sleep, etc.</code><br/>
             The node automatically converts this JSON object into the correct raw string for the API.
+            Depends on the command, the value can be a string or a number and sometimes a number needs to be multiplied by 2.
         </li>
         <li><b>Raw String Format:</b><br/>
             Pass the raw Socket.IO string directly (e.g. <code>C|WriteParametri|34|1</code>). Useful for unsupported features or unmapped diagnostic codes.
