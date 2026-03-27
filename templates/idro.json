@@ -46,7 +46,7 @@
     {
       "key": "temp_fumes",
       "pos": 5,
-      "type": "temp",
+      "type": "int",
       "label": "Fumes Temperature (°C)"
     },
     {
@@ -251,8 +251,14 @@
       "label": "Pellet Level"
     },
     {
-      "key": "sound",
+      "key": "celsius_fahrenheit",
       "pos": 48,
+      "type": "bool",
+      "label": "Fahrenheit Mode"
+    },
+    {
+      "key": "sound",
+      "pos": 49,
       "type": "bool",
       "label": "Sound Effects"
     },
