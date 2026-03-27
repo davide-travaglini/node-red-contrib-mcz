@@ -1,0 +1,382 @@
+{
+  "name": "MCZ Musa Hydro",
+  "description": "MCZ Musa Hydro pellet stove (and similar hydro models: Musa+ Hydro, Club Hydro, Suite Hydro). Includes all hydraulic circuit fields: 3-way valve, pump PWM, puffer, boiler, return temperature, health setpoint. All positions are verified against maestrogateway messages.py.",
+  "fields": [
+    {
+      "key": "state_raw",
+      "pos": 1,
+      "type": "int",
+      "label": "State (raw)"
+    },
+    {
+      "key": "state",
+      "pos": 1,
+      "type": "map",
+      "map": "STOVE_STATES",
+      "label": "Stove State"
+    },
+    {
+      "key": "in_error",
+      "pos": 1,
+      "type": "bool_gte",
+      "threshold": 50,
+      "label": "In Error"
+    },
+
+    {
+      "key": "fan_ambient",
+      "pos": 2,
+      "type": "map",
+      "map": "FAN_STATES",
+      "label": "Ambient Fan"
+    },
+    {
+      "key": "fan_ducted1",
+      "pos": 3,
+      "type": "map",
+      "map": "FAN_STATES",
+      "label": "Ducted Fan 1"
+    },
+    {
+      "key": "fan_ducted2",
+      "pos": 4,
+      "type": "map",
+      "map": "FAN_STATES",
+      "label": "Ducted Fan 2"
+    },
+
+    {
+      "key": "temp_fumes",
+      "pos": 5,
+      "type": "int",
+      "label": "Fumes Temperature (°C)"
+    },
+    {
+      "key": "temp_ambient",
+      "pos": 6,
+      "type": "temp",
+      "label": "Ambient Temperature (°C)"
+    },
+    {
+      "key": "temp_puffer",
+      "pos": 7,
+      "type": "temp",
+      "label": "Puffer Temperature (°C)"
+    },
+    {
+      "key": "temp_boiler",
+      "pos": 8,
+      "type": "temp",
+      "label": "Boiler Temperature (°C)"
+    },
+    {
+      "key": "temp_ntc3",
+      "pos": 9,
+      "type": "temp",
+      "label": "NTC3 Temperature (°C)"
+    },
+
+    {
+      "key": "ignitor",
+      "pos": 10,
+      "type": "map",
+      "map": "IGNITOR_STATES",
+      "label": "Ignitor (Bougie)"
+    },
+    {
+      "key": "active_set",
+      "pos": 11,
+      "type": "int",
+      "label": "Active Set"
+    },
+    {
+      "key": "rpm_fumes",
+      "pos": 12,
+      "type": "int",
+      "label": "Fumes Extractor RPM"
+    },
+    {
+      "key": "rpm_worm_set",
+      "pos": 13,
+      "type": "int",
+      "label": "Worm Wheel RPM (Set)"
+    },
+    {
+      "key": "rpm_worm_live",
+      "pos": 14,
+      "type": "int",
+      "label": "Worm Wheel RPM (Live)"
+    },
+
+    {
+      "key": "three_way_valve",
+      "pos": 15,
+      "type": "map",
+      "map": "THREE_WAY_VALVE",
+      "label": "3-Way Valve"
+    },
+    {
+      "key": "pump_pwm",
+      "pos": 16,
+      "type": "int",
+      "label": "Pump PWM (%)"
+    },
+
+    {
+      "key": "brazier",
+      "pos": 17,
+      "type": "map",
+      "map": "BRAZIER_STATES",
+      "label": "Brazier"
+    },
+    {
+      "key": "profile",
+      "pos": 18,
+      "type": "map",
+      "map": "PROFILES",
+      "label": "Profile"
+    },
+    {
+      "key": "modbus_address",
+      "pos": 19,
+      "type": "int",
+      "label": "Modbus Address"
+    },
+    {
+      "key": "active_mode",
+      "pos": 20,
+      "type": "bool",
+      "label": "Active Mode"
+    },
+    {
+      "key": "active_live",
+      "pos": 21,
+      "type": "int",
+      "label": "Active Live"
+    },
+    {
+      "key": "regulation",
+      "pos": 22,
+      "type": "map",
+      "map": "REGULATION_MODES",
+      "label": "Regulation"
+    },
+    {
+      "key": "eco",
+      "pos": 23,
+      "type": "bool",
+      "label": "Eco Mode"
+    },
+    {
+      "key": "silent",
+      "pos": 24,
+      "type": "bool",
+      "label": "Silent Mode"
+    },
+    {
+      "key": "chronostat",
+      "pos": 25,
+      "type": "bool",
+      "label": "Chronostat Active"
+    },
+
+    {
+      "key": "temp_setpoint",
+      "pos": 26,
+      "type": "temp",
+      "label": "Temperature Setpoint (°C)"
+    },
+    {
+      "key": "temp_boiler_set",
+      "pos": 27,
+      "type": "temp",
+      "label": "Boiler Setpoint (°C)"
+    },
+    {
+      "key": "temp_board",
+      "pos": 28,
+      "type": "temp",
+      "label": "Motherboard Temperature (°C)"
+    },
+
+    {
+      "key": "power",
+      "pos": 29,
+      "type": "range_offset",
+      "min": 11,
+      "max": 15,
+      "offset": -10,
+      "label": "Power (1-5)"
+    },
+
+    {
+      "key": "firmware_version",
+      "pos": 30,
+      "type": "int",
+      "label": "Firmware Version"
+    },
+    {
+      "key": "database_id",
+      "pos": 31,
+      "type": "int",
+      "label": "Database ID (hardware model)"
+    },
+
+    {
+      "key": "stove_clock",
+      "type": "clock",
+      "positions": {
+        "hour":  32,
+        "min":   33,
+        "day":   34,
+        "month": 35,
+        "year":  36
+      },
+      "label": "Stove Clock"
+    },
+
+    {
+      "key": "total_hours",
+      "pos": 37,
+      "type": "hours",
+      "label": "Total Working Hours"
+    },
+    {
+      "key": "hours_p1",
+      "pos": 38,
+      "type": "hours",
+      "label": "Hours Power 1"
+    },
+    {
+      "key": "hours_p2",
+      "pos": 39,
+      "type": "hours",
+      "label": "Hours Power 2"
+    },
+    {
+      "key": "hours_p3",
+      "pos": 40,
+      "type": "hours",
+      "label": "Hours Power 3"
+    },
+    {
+      "key": "hours_p4",
+      "pos": 41,
+      "type": "hours",
+      "label": "Hours Power 4"
+    },
+    {
+      "key": "hours_p5",
+      "pos": 42,
+      "type": "hours",
+      "label": "Hours Power 5"
+    },
+    {
+      "key": "maint_hours",
+      "pos": 43,
+      "type": "int",
+      "label": "Hours to Maintenance"
+    },
+    {
+      "key": "mins_to_off",
+      "pos": 44,
+      "type": "int",
+      "label": "Minutes to Shutoff"
+    },
+    {
+      "key": "ignitions_count",
+      "pos": 45,
+      "type": "int",
+      "label": "Ignitions Count"
+    },
+    {
+      "key": "active_temperature",
+      "pos": 46,
+      "type": "int",
+      "label": "Active Temperature"
+    },
+
+    {
+      "key": "pellet_sensor",
+      "pos": 47,
+      "type": "map",
+      "map": "PELLET_LEVELS",
+      "label": "Pellet Level"
+    },
+    {
+      "key": "celsius_fahrenheit",
+      "pos": 48,
+      "type": "bool",
+      "label": "Fahrenheit Mode"
+    },
+    {
+      "key": "sound",
+      "pos": 49,
+      "type": "bool",
+      "label": "Sound Effects"
+    },
+    {
+      "key": "sleep",
+      "pos": 50,
+      "type": "bool",
+      "label": "Sleep"
+    },
+    {
+      "key": "season_mode",
+      "pos": 51,
+      "type": "map",
+      "map": "SEASON_MODES",
+      "label": "Season Mode"
+    },
+
+    {
+      "key": "wifi_probe1",
+      "pos": 52,
+      "type": "temp",
+      "label": "WiFi Probe 1 (°C)"
+    },
+    {
+      "key": "wifi_probe2",
+      "pos": 53,
+      "type": "temp",
+      "label": "WiFi Probe 2 (°C)"
+    },
+    {
+      "key": "wifi_probe3",
+      "pos": 54,
+      "type": "temp",
+      "label": "WiFi Probe 3 (°C)"
+    },
+
+    {
+      "key": "set_puffer",
+      "pos": 56,
+      "type": "temp",
+      "label": "Puffer Setpoint (°C)"
+    },
+    {
+      "key": "set_boiler",
+      "pos": 57,
+      "type": "temp",
+      "label": "Boiler Target (°C)"
+    },
+    {
+      "key": "set_health",
+      "pos": 58,
+      "type": "temp",
+      "label": "Health Setpoint (°C)"
+    },
+    {
+      "key": "temp_return",
+      "pos": 59,
+      "type": "temp",
+      "label": "Return Temperature (°C)"
+    },
+    {
+      "key": "antifreeze",
+      "pos": 60,
+      "type": "bool",
+      "label": "Antifreeze"
+    }
+  ]
+}
