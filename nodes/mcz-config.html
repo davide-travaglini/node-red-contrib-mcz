@@ -53,10 +53,15 @@
     <div class="form-row">
         <label for="node-config-input-templateType"><i class="fa fa-list"></i> Template</label>
         <select id="node-config-input-templateType" style="width:70%">
-            <option value="aria">Aria</option>
-            <option value="idro">Idro</option>
-            <option value="custom">Custom</option>
+            <option value="aria">Aria — Air stove (no ducted fans)</option>
+            <option value="aria_comfort">Aria Comfort Air — Air stove with multi-zone ducted fans</option>
+            <option value="idro">Idro — Hydro stove (puffer / boiler)</option>
+            <option value="musa_hydro">Musa Hydro — Hydro stove with 3-way valve + pump (Musa, Club, Suite)</option>
+            <option value="custom">Custom JSON</option>
         </select>
+        <div style="margin-top:4px;font-size:0.82em;color:#888">
+            Not sure? Use an <b>MCZ Debug</b> node to inspect live positions and identify your model.
+        </div>
     </div>
     <div class="form-row" id="mcz-custom-row" style="display:none">
         <label for="node-config-input-customTemplate"><i class="fa fa-code"></i> JSON Custom</label>
