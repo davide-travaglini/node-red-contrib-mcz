@@ -33,16 +33,16 @@
 
 <script type="text/html" data-template-name="mcz-out">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-out.label.name"></span></label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> Configuration</label>
+        <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> <span data-i18n="mcz-out.label.stoveConfig"></span></label>
         <input type="text" id="node-input-stoveConfig">
     </div>
     <hr>
     <div class="form-row">
-        <label for="node-input-command"><i class="fa fa-terminal"></i> Command</label>
+        <label for="node-input-command"><i class="fa fa-terminal"></i> <span data-i18n="mcz-out.label.command"></span></label>
         <select id="node-input-command" style="width:70%;">
             <option value="">-- From msg.payload.command --</option>
             <option value="Power">Power (ON/OFF)</option>
@@ -66,14 +66,14 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-payloadType"><i class="fa fa-envelope"></i> Value</label>
+        <label for="node-input-payloadType"><i class="fa fa-envelope"></i> <span data-i18n="mcz-out.label.value"></span></label>
         <select id="node-input-payloadType" style="width:70%;">
             <option value="msg">-- From msg.payload.value --</option>
             <option value="fixed">Fixed value</option>
         </select>
     </div>
     <div class="form-row" id="row-fixed-value">
-        <label for="node-input-fixedValue"><i class="fa fa-pencil"></i> Fixed Value</label>
+        <label for="node-input-fixedValue"><i class="fa fa-pencil"></i> <span data-i18n="mcz-out.label.fixedValue"></span></label>
         <input type="text" id="node-input-fixedValue" placeholder="e.g. 1, 21.5, ON, OFF" style="width:70%;">
     </div>
 </script>

@@ -15,8 +15,8 @@ module.exports = function(RED) {
         node.interval = parseInt(config.interval, 10);
         if (isNaN(node.interval)) node.interval = 30;
         
-        node.serialNumber = config.serialNumber;
-        node.macAddress = config.macAddress;
+        node.serialNumber = (config.serialNumber || '').trim();
+        node.macAddress = (config.macAddress || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         node.templateType = config.templateType || 'aria';
         node.customTemplate = config.customTemplate || '';
 
@@ -101,6 +101,14 @@ module.exports = function(RED) {
             node.socket.on('connect_error', (err) => {
                 node.warn(`[mcz-config] Connection error (SN=${node.serialNumber}): ${err.message}`);
                 node._emit({ event: 'error', serialNumber: node.serialNumber, error: err.message });
+            });
+
+            node.socket.io.on('reconnect_attempt', (attempt) => {
+                node._emit({ event: 'reconnecting', serialNumber: node.serialNumber, attempt });
+            });
+
+            node.socket.io.on('reconnect_error', (err) => {
+                node._emit({ event: 'error', serialNumber: node.serialNumber, error: 'Reconnect failed: ' + err.message });
             });
 
             node.socket.on('rispondo', (response) => {

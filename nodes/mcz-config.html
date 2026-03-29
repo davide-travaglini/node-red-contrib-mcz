@@ -29,42 +29,42 @@
 
 <script type="text/html" data-template-name="mcz-config">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-config.label.name"></span></label>
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-server"><i class="fa fa-server"></i> Server</label>
+        <label for="node-config-input-server"><i class="fa fa-server"></i> <span data-i18n="mcz-config.label.server"></span></label>
         <input type="text" id="node-config-input-server" placeholder="http://app.mcz.it:9000">
     </div>
     <div class="form-row">
-        <label for="node-config-input-interval"><i class="fa fa-clock-o"></i> Interval (s)</label>
+        <label for="node-config-input-interval"><i class="fa fa-clock-o"></i> <span data-i18n="mcz-config.label.interval"></span></label>
         <input type="number" id="node-config-input-interval" min="0" step="1" style="width:80px">
-        <span style="font-size: 0.8em; color: gray; margin-left: 10px;">(0 = Polling Disabled. Use 'get' payload in Read node)</span>
+        <span style="font-size: 0.8em; color: gray; margin-left: 10px;" data-i18n="mcz-config.label.intervalTip"></span>
     </div>
     <hr>
     <div class="form-row">
-        <label for="node-config-input-serialNumber"><i class="fa fa-barcode"></i> Serial Number</label>
+        <label for="node-config-input-serialNumber"><i class="fa fa-barcode"></i> <span data-i18n="mcz-config.label.serialNumber"></span></label>
         <input type="text" id="node-config-input-serialNumber" placeholder="e.g. 2105149910003">
     </div>
     <div class="form-row">
-        <label for="node-config-input-macAddress"><i class="fa fa-wifi"></i> MAC Address</label>
+        <label for="node-config-input-macAddress"><i class="fa fa-wifi"></i> <span data-i18n="mcz-config.label.macAddress"></span></label>
         <input type="text" id="node-config-input-macAddress" placeholder="e.g. 4A3FDAA538CD">
     </div>
     <div class="form-row">
-        <label for="node-config-input-templateType"><i class="fa fa-list"></i> Template</label>
+        <label for="node-config-input-templateType"><i class="fa fa-list"></i> <span data-i18n="mcz-config.label.template"></span></label>
         <select id="node-config-input-templateType" style="width:70%">
-            <option value="aria">Aria — Air stove (no ducted fans)</option>
-            <option value="aria_comfort">Aria Comfort Air — Air stove with multi-zone ducted fans</option>
-            <option value="idro">Idro — Hydro stove (puffer / boiler)</option>
-            <option value="musa_hydro">Musa Hydro — Hydro stove with 3-way valve + pump (Musa, Club, Suite)</option>
-            <option value="custom">Custom JSON</option>
+            <option value="aria" data-i18n="mcz-config.template.aria"></option>
+            <option value="aria_comfort" data-i18n="mcz-config.template.aria_comfort"></option>
+            <option value="idro" data-i18n="mcz-config.template.idro"></option>
+            <option value="musa_hydro" data-i18n="mcz-config.template.musa_hydro"></option>
+            <option value="custom" data-i18n="mcz-config.template.custom"></option>
         </select>
-        <div style="margin-top:4px;font-size:0.82em;color:#888">
-            Not sure? Use an <b>MCZ Debug</b> node to inspect live positions and identify your model.
+        <div style="margin-top:4px;font-size:0.82em;color:#888" data-i18n="mcz-config.label.templateTip">
+            Not sure? Use an MCZ Debug node to inspect live positions and identify your model.
         </div>
     </div>
     <div class="form-row" id="mcz-custom-row" style="display:none">
-        <label for="node-config-input-customTemplate"><i class="fa fa-code"></i> JSON Custom</label>
+        <label for="node-config-input-customTemplate"><i class="fa fa-code"></i> <span data-i18n="mcz-config.label.customJson"></span></label>
         <textarea id="node-config-input-customTemplate" style="width:100%;height:150px;font-family:monospace;font-size:0.85em;" placeholder='{"name":"Custom","fields":[...]}'></textarea>
     </div>
 </script>

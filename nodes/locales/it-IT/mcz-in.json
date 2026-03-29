@@ -1,0 +1,12 @@
+{
+    "mcz-in": {
+        "label": {
+            "name": "Nome",
+            "stoveConfig": "Configurazione",
+            "outputRaw": "Output dati raw",
+            "outputRawTip": "Aggiunge la proprietà msg.raw in uscita",
+            "enableHaDiscovery": "HA Discovery",
+            "enableHaDiscoveryTip": "Invia il payload MQTT Discovery all'avvio"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "mcz-config": {
+        "label": {
+            "name": "Name",
+            "server": "Server",
+            "interval": "Interval (s)",
+            "serialNumber": "Serial Number",
+            "macAddress": "MAC Address",
+            "template": "Template",
+            "customJson": "JSON Custom",
+            "intervalTip": "(0 = Polling Disabled. Use 'get' payload in Read node)",
+            "templateTip": "Not sure? Use an MCZ Debug node to inspect live positions and identify your model."
+        },
+        "template": {
+            "aria": "Aria — Air stove (no ducted fans)",
+            "aria_comfort": "Aria Comfort Air — Air stove with multi-zone ducted fans",
+            "idro": "Idro — Hydro stove (puffer / boiler)",
+            "musa_hydro": "Musa Hydro — Hydro stove with 3-way valve + pump (Musa, Club, Suite)",
+            "custom": "Custom JSON"
+        }
+    }
+}
