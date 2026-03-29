@@ -21,17 +21,23 @@ Or you can install it via the Palette Manager in the Node-RED UI.
 
 ## Nodes Overview
 
-The package provides 3 components:
+The package provides 4 components:
 1. **mcz-config**: The hidden configuration node representing a single stove connection. 
 2. **mcz-in**: The Read node. Outputs the current stove state.
 3. **mcz-out**: The Write node. Accepts inputs to control the stove.
+4. **mcz-debug**: A read-only diagnostic node that outputs raw hexadecimal arrays and visualizes internal mappings. Useful for identifying unknown model fields to build custom templates.
 
 ### 1. Configuration Node (`mcz-config`)
 This node behaves like a physical device connection (similar to an MQTT broker or a Modbus device). You must configure **one node per stove**.
 - **Serial Number (SN)**: The 13-digit serial number of your stove.
 - **MAC Address**: The MAC address of the stove Wi-Fi module (without colons, e.g. `4A3FDAA538CD`).
 - **Interval**: If $> 0$, the node will automatically request stove metrics every X seconds (Auto-Polling). If set to `0`, Auto-Polling is disabled.
-- **Template**: The stove dictionary template (*Aria*, *Idro*, or *Custom*). If you select *Custom*, a box will appear allowing you to drop in a JSON mapping file to parse the proprietary data string.
+- **Template**: The stove dictionary template. Available options:
+  - *Aria*: Air stoves with standard fan.
+  - *Aria Comfort Air*: Air stoves with multizone ducted fans.
+  - *Idro*: Standard Hydro stoves (puffer/boiler).
+  - *Musa Hydro*: Hydro stoves with 3-way valve and internal pump (e.g., Musa, Club, Suite).
+  - *Custom*: If selected, a box will appear allowing you to drop in a JSON mapping file to parse the proprietary data string.
 
 ### 2. Read Node (`mcz-in`)
 Receives telemetry data from the associated `mcz-config` node and pushes it into your flow.
@@ -130,13 +136,30 @@ This fully eliminates the need for any internal hardcoding if MCZ updates firmwa
 
 ---
 
-## Example Flow: Manual Polling
+## Example Flows
 
-If you don't want Node-RED pinging the server 24/7 every 30 seconds, configure the Stove with an **Interval of 0**.
-Then, set up an `Inject` node to trigger `"get"`:
+Here are a few quick scenarios to integrate this package (you can copy-paste the JSON code into Node-RED via `Menu -> Import`):
+
+### 1. Simple Polling and Debug
+Configure your config node to fetch data every 30s. Connect an **mcz-in** to read the state and an **mcz-debug** node to spot unknown fields if you notice missing data in your specific stove model.
+
+```json
+[{"id":"mcz_in_1","type":"mcz-in","name":"My Stove","stoveConfig":"config_1","topic":"","outputRaw":false,"x":200,"y":100,"wires":[["debug_state"]]},{"id":"debug_state","type":"debug","name":"State JSON","active":true,"tosidebar":true,"console":false,"complete":"payload","targetType":"msg","x":400,"y":100,"wires":[]},{"id":"mcz_debug_1","type":"mcz-debug","name":"Debug Raw","stoveConfig":"config_1","x":210,"y":160,"wires":[["debug_raw"]]},{"id":"debug_raw","type":"debug","name":"Position Array","active":false,"tosidebar":true,"console":false,"complete":"payload.flat_dec","targetType":"msg","x":410,"y":160,"wires":[]}]
+```
+
+### 2. Manual Polling
+If you don't want Node-RED pinging the MCZ server 24/7 every 30 seconds, configure the Stove with an **Interval of 0**.
+Then, set up an `Inject` node to trigger `"get"` via msg.payload:
 
 ```text
 [Inject Node: interval every 5 mins] --> [msg.payload = "get"] --> [mcz-in] --> [Debug]
+```
+
+### 3. Dashboard Control
+Use standard Node-RED dashboard widgets (like numeric inputs or sliders) to control the target temperature and send it to the stove dynamically.
+
+```json
+[{"id":"dash_temp","type":"ui_numeric","name":"Target Temp","group":"dash_group","order":1,"format":"{{value}}","min":10,"max":35,"step":0.5,"x":210,"y":300,"wires":[["function_temp"]]},{"id":"function_temp","type":"function","name":"Format Command","func":"msg.payload = {\n    command: \"Temperature\",\n    value: msg.payload\n};\nreturn msg;","outputs":1,"x":410,"y":300,"wires":[["mcz_out_1"]]},{"id":"mcz_out_1","type":"mcz-out","name":"Set Stove","stoveConfig":"config_1","command":"","commandValue":"","x":600,"y":300,"wires":[]}]
 ```
 
 ## Contributing

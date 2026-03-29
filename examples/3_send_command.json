@@ -1,0 +1,84 @@
+[
+  {
+    "id": "a6fefe06f3338ee1",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "function_temp",
+    "type": "function",
+    "z": "a6fefe06f3338ee1",
+    "name": "Format Command",
+    "func": "msg.payload = {\n    command: \"Temperature\",\n    value: msg.payload\n};\nreturn msg;",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 590,
+    "y": 300,
+    "wires": [
+      [
+        "mcz_out_1"
+      ]
+    ]
+  },
+  {
+    "id": "mcz_out_1",
+    "type": "mcz-out",
+    "z": "a6fefe06f3338ee1",
+    "name": "Set Stove",
+    "stoveConfig": "config_1",
+    "command": "",
+    "x": 820,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "3d31588db6861ed2",
+    "type": "inject",
+    "z": "a6fefe06f3338ee1",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "num",
+    "x": 370,
+    "y": 300,
+    "wires": [
+      [
+        "function_temp"
+      ]
+    ]
+  },
+  {
+    "id": "config_1",
+    "type": "mcz-config",
+    "name": "MCZ Cloud Demo",
+    "server": "http://app.mcz.it:9000",
+    "interval": 30,
+    "serialNumber": "1234567890123",
+    "macAddress": "AABBCCDDEEFF",
+    "templateType": "aria"
+  },
+  {
+    "id": "e848aa78395b78b0",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mcz": "0.5.0"
+    }
+  }
+]

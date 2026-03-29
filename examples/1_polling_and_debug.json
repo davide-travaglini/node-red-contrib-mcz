@@ -1,0 +1,70 @@
+[
+  {
+    "id": "config_1",
+    "type": "mcz-config",
+    "name": "MCZ Cloud Demo",
+    "server": "http://app.mcz.it:9000",
+    "interval": 30,
+    "serialNumber": "1234567890123",
+    "macAddress": "AABBCCDDEEFF",
+    "templateType": "aria"
+  },
+  {
+    "id": "mcz_in_1",
+    "type": "mcz-in",
+    "z": "flow_1",
+    "name": "Read Stove",
+    "stoveConfig": "config_1",
+    "topic": "mcz/status",
+    "outputRaw": false,
+    "x": 200,
+    "y": 100,
+    "wires": [
+      [
+        "debug_state"
+      ]
+    ]
+  },
+  {
+    "id": "debug_state",
+    "type": "debug",
+    "z": "flow_1",
+    "name": "State JSON",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 390,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "mcz_debug_1",
+    "type": "mcz-debug",
+    "z": "flow_1",
+    "name": "Debug Raw Map",
+    "stoveConfig": "config_1",
+    "x": 220,
+    "y": 160,
+    "wires": [
+      [
+        "debug_raw"
+      ]
+    ]
+  },
+  {
+    "id": "debug_raw",
+    "type": "debug",
+    "z": "flow_1",
+    "name": "Raw Positions",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "complete": "payload.flat_dec",
+    "targetType": "msg",
+    "x": 400,
+    "y": 160,
+    "wires": []
+  }
+]
