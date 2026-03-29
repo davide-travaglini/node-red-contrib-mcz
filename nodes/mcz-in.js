@@ -7,6 +7,7 @@ module.exports = function(RED) {
 
         node.name = config.name;
         node.outputRaw = config.outputRaw === true;
+        node.enableHaDiscovery = config.enableHaDiscovery === true;
 
         const cfg = RED.nodes.getNode(config.stoveConfig);
         if (!cfg) {
@@ -26,6 +27,41 @@ module.exports = function(RED) {
             switch (evt.event) {
                 case 'connect':
                     setStatus('green', 'dot', `Connected — ${evt.serialNumber}`);
+                    if (node.enableHaDiscovery) {
+                        const haTopicState = `mcz/${evt.serialNumber}`;
+                        const haTopicCmd = `mcz/${evt.serialNumber}/set`;
+                        const haPayload = {
+                            name: node.name || "MCZ Stove",
+                            unique_id: `mcz_stove_${evt.serialNumber}`,
+                            icon: "mdi:fire",
+                            temperature_command_topic: haTopicCmd,
+                            temperature_command_template: '{"command":"Temperature", "value": {{value}}}',
+                            temperature_state_topic: haTopicState,
+                            temperature_state_template: '{{value_json.temp_ambient}}',
+                            current_temperature_topic: haTopicState,
+                            current_temperature_template: '{{value_json.temp_ambient}}',
+                            mode_state_topic: haTopicState,
+                            mode_state_template: '{% if value_json.stato == "Spento" %}off{% else %}heat{% endif %}',
+                            mode_command_topic: haTopicCmd,
+                            mode_command_template: '{% if value == "off" %}{"command":"Power", "value": 0}{% else %}{"command":"Power", "value": 1}{% endif %}',
+                            modes: ["off", "heat"],
+                            fan_mode_state_topic: haTopicState,
+                            fan_mode_state_template: '{{value_json.fan_ambient}}',
+                            fan_mode_command_topic: haTopicCmd,
+                            fan_mode_command_template: '{"command":"Fan_State", "value": "{{value}}"}',
+                            fan_modes: ["0", "1", "2", "3", "4", "5", "6"],
+                            min_temp: 10,
+                            max_temp: 35,
+                            temp_step: 0.5,
+                            device: {
+                                identifiers: [`mcz_${evt.serialNumber}`],
+                                name: "MCZ Stove",
+                                manufacturer: "MCZ",
+                                model: "Pellet Stove"
+                            }
+                        };
+                        node.send({ topic: `homeassistant/climate/mcz_${evt.serialNumber}/config`, payload: haPayload, retain: true });
+                    }
                     node.send({ topic: `mcz/${evt.serialNumber}/event`, payload: evt });
                     break;
                 case 'disconnect':
@@ -49,6 +85,10 @@ module.exports = function(RED) {
                     break;
                 case 'error':
                     setStatus('red', 'ring', `Error: ${evt.error}`);
+                    node.send({ topic: `mcz/${evt.serialNumber}/event`, payload: evt });
+                    break;
+                case 'reconnecting':
+                    setStatus('yellow', 'ring', `Reconnecting (Attempt ${evt.attempt})...`);
                     node.send({ topic: `mcz/${evt.serialNumber}/event`, payload: evt });
                     break;
             }

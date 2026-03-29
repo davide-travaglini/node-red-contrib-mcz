@@ -5,6 +5,8 @@ This node package allows you to monitor stove metrics (temperatures, fans, alarm
 
 > **Note**: This is for stoves using the *old* MCZ app (which communicates via Socket.IO). It is **not** designed for the newer MCZ Maestro REST architecture, although many concepts are similar.
 
+> **V1.0 Update**: The package now includes fully integrated **Home Assistant MQTT Auto-Discovery**, robust connection handling with sanitization, and native bilingual UI support (**English / Italian**).
+
 ---
 
 ## Installation
@@ -28,7 +30,7 @@ The package provides 4 components:
 4. **mcz-debug**: A read-only diagnostic node that outputs raw hexadecimal arrays and visualizes internal mappings. Useful for identifying unknown model fields to build custom templates.
 
 ### 1. Configuration Node (`mcz-config`)
-This node behaves like a physical device connection (similar to an MQTT broker or a Modbus device). You must configure **one node per stove**.
+This behaves like a physical device connection. You must configure **one config node per stove**. The package natively supports **connecting to multiple stoves simultaneously** (e.g. your house and your vacation home); just create multiple config nodes and the underlying engine will multiplex the connections without conflicts.
 - **Serial Number (SN)**: The 13-digit serial number of your stove.
 - **MAC Address**: The MAC address of the stove Wi-Fi module (without colons, e.g. `4A3FDAA538CD`).
 - **Interval**: If $> 0$, the node will automatically request stove metrics every X seconds (Auto-Polling). If set to `0`, Auto-Polling is disabled.
@@ -46,6 +48,9 @@ Receives telemetry data from the associated `mcz-config` node and pushes it into
 - `msg.topic`: `mcz/SERIAL_NUMBER`
 - `msg.payload`: A structured JSON object containing all the parsed metrics (Temperatures, Fan RPM, Potency, Active States).
 - `msg.raw`: A raw pipe-separated string received from the cloud (if "Output raw data" is checked).
+
+**Home Assistant (MQTT Auto-Discovery):**
+By checking the **"HA Discovery"** box in the node settings, `mcz-in` will emit an MQTT Auto-Discovery configuration payload whenever it connects to the cloud. By routing this output directly to a standard Node-RED **MQTT Out** node (with a blank topic), your MCZ Stove will instantly and automatically pop up as a fully-featured native `Climate` Thermostat inside Home Assistant, requiring zero YAML configuration.
 
 **Manual Control (Input):**
 You can interact with the underlying Socket.IO connection by injecting strings into the `mcz-in` node's `msg.payload`:

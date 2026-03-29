@@ -1,0 +1,22 @@
+{
+    "mcz-config": {
+        "label": {
+            "name": "Nome",
+            "server": "Server",
+            "interval": "Intervallo (s)",
+            "serialNumber": "Numero Seriale",
+            "macAddress": "Indirizzo MAC",
+            "template": "Template",
+            "customJson": "JSON Custom",
+            "intervalTip": "(0 = Polling disattivato. Usa 'get' da un nodo Inject)",
+            "templateTip": "Non sei sicuro del modello? Usa il nodo 'MCZ Debug' per scoprire campi aggiuntivi."
+        },
+        "template": {
+            "aria": "Aria — Stufa ad aria (no ventole canalizzate)",
+            "aria_comfort": "Aria Comfort Air — Stufa ad aria ventilata multizona",
+            "idro": "Idro — Stufa idro (puffer / radiatori)",
+            "musa_hydro": "Musa Hydro — Stufa idro con valvola a 3 vie + pompa (es. Musa, Club)",
+            "custom": "JSON Custom"
+        }
+    }
+}

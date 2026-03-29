@@ -8,7 +8,8 @@
         defaults: {
             name: { value: '' },
             stoveConfig: { value: '', type: 'mcz-config', required: true },
-            outputRaw: { value: false }
+            outputRaw: { value: false },
+            enableHaDiscovery: { value: false }
         },
         label: function() {
             if (this.name) return this.name;
@@ -21,17 +22,22 @@
 
 <script type="text/html" data-template-name="mcz-in">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-in.label.name"></span></label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> Configuration</label>
+        <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> <span data-i18n="mcz-in.label.stoveConfig"></span></label>
         <input type="text" id="node-input-stoveConfig">
     </div>
     <div class="form-row">
-        <label for="node-input-outputRaw"><i class="fa fa-code"></i> Output raw data</label>
+        <label for="node-input-outputRaw"><i class="fa fa-code"></i> <span data-i18n="mcz-in.label.outputRaw"></span></label>
         <input type="checkbox" id="node-input-outputRaw" style="width:auto">
-        <span style="margin-left:6px;font-size:0.85em;color:#888">Appends <code>msg.raw</code> to the output</span>
+        <span style="margin-left:6px;font-size:0.85em;color:#888" data-i18n="mcz-in.label.outputRawTip">Appends <code>msg.raw</code> to the output</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-enableHaDiscovery"><i class="fa fa-home"></i> <span data-i18n="mcz-in.label.enableHaDiscovery"></span></label>
+        <input type="checkbox" id="node-input-enableHaDiscovery" style="width:auto">
+        <span style="margin-left:6px;font-size:0.85em;color:#888" data-i18n="mcz-in.label.enableHaDiscoveryTip">Emit MQTT Discovery payload on connect</span>
     </div>
 </script>
 

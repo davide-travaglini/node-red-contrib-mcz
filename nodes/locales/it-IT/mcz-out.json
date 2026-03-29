@@ -1,0 +1,11 @@
+{
+    "mcz-out": {
+        "label": {
+            "name": "Nome",
+            "stoveConfig": "Configurazione",
+            "command": "Comando",
+            "value": "Valore input",
+            "fixedValue": "Valore Fisso"
+        }
+    }
+}
