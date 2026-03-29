@@ -1,0 +1,67 @@
+[
+  {
+    "id": "config_0",
+    "type": "mcz-config",
+    "name": "No Auto-Polling",
+    "server": "http://app.mcz.it:9000",
+    "interval": 0,
+    "serialNumber": "1234567890123",
+    "macAddress": "AABBCCDDEEFF",
+    "templateType": "aria"
+  },
+  {
+    "id": "inject_1",
+    "type": "inject",
+    "z": "flow_2",
+    "name": "Get Status",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "300",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "get",
+    "payloadType": "str",
+    "x": 170,
+    "y": 120,
+    "wires": [
+      [
+        "mcz_in_manual"
+      ]
+    ]
+  },
+  {
+    "id": "mcz_in_manual",
+    "type": "mcz-in",
+    "z": "flow_2",
+    "name": "Manual Polling",
+    "stoveConfig": "config_0",
+    "topic": "mcz/status",
+    "outputRaw": false,
+    "x": 360,
+    "y": 120,
+    "wires": [
+      [
+        "debug_manual"
+      ]
+    ]
+  },
+  {
+    "id": "debug_manual",
+    "type": "debug",
+    "z": "flow_2",
+    "name": "Payload Result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 560,
+    "y": 120,
+    "wires": []
+  }
+]
