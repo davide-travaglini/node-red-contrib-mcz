@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-mcz",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Node-RED nodes for MCZ pellet stoves — supports reading metrics and writing commands (Socket.IO)",
   "license": "MIT",
   "author": "Davide",
@@ -29,8 +29,14 @@
       "mcz-debug": "nodes/mcz-debug.js"
     }
   },
+  "scripts": {
+    "test": "mocha test/**/*.test.js"
+  },
   "dependencies": {
     "socket.io-client": "^4.7.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.8.2"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -5,7 +5,7 @@
         icon: 'font-awesome/fa-fire',
         align: 'right',
         inputs: 1,
-        outputs: 0,
+        outputs: 1,
         defaults: {
             name: { value: '' },
             stoveConfig: { value: '', type: 'mcz-config', required: true },
@@ -34,7 +34,7 @@
 <script type="text/html" data-template-name="mcz-out">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-out.label.name"></span></label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]mcz-out.label.namePlaceholder">
     </div>
     <div class="form-row">
         <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> <span data-i18n="mcz-out.label.stoveConfig"></span></label>
@@ -44,57 +44,40 @@
     <div class="form-row">
         <label for="node-input-command"><i class="fa fa-terminal"></i> <span data-i18n="mcz-out.label.command"></span></label>
         <select id="node-input-command" style="width:70%;">
-            <option value="">-- From msg.payload.command --</option>
-            <option value="Power">Power (ON/OFF)</option>
-            <option value="Temperature">Temperature (°C)</option>
-            <option value="Boiler_Setpoint">Boiler Setpoint (°C)</option>
-            <option value="Power_Level">Power Level (1-5)</option>
-            <option value="Fan_State">Fan State (0-6)</option>
-            <option value="DuctedFan1">Ducted Fan 1 (0-6)</option>
-            <option value="DuctedFan2">Ducted Fan 2 (0-6)</option>
-            <option value="Eco_Mode">Eco Mode (ON/OFF)</option>
-            <option value="Silent_Mode">Silent Mode (ON/OFF)</option>
-            <option value="Active_Mode">Active Mode (ON/OFF)</option>
-            <option value="Control_Mode">Control Mode (ON/OFF)</option>
-            <option value="Chronostat">Chronostat (ON/OFF)</option>
-            <option value="Sleep">Sleep (Minutes)</option>
-            <option value="Summer_Mode">Summer Mode (ON/OFF)</option>
-            <option value="AntiFreeze">AntiFreeze Temp (°C)</option>
-            <option value="Sound_Effects">Sound Effects (ON/OFF)</option>
-            <option value="Reset_Alarm">Reset Alarm (Trigger)</option>
-            <option value="Reset_Active">Reset Active (Trigger)</option>
+            <option value="" data-i18n="mcz-out.label.commandFrom"></option>
+            <option value="Power" data-i18n="mcz-out.command.Power"></option>
+            <option value="Temperature" data-i18n="mcz-out.command.Temperature"></option>
+            <option value="Boiler_Setpoint" data-i18n="mcz-out.command.Boiler_Setpoint"></option>
+            <option value="Power_Level" data-i18n="mcz-out.command.Power_Level"></option>
+            <option value="Fan_State" data-i18n="mcz-out.command.Fan_State"></option>
+            <option value="DuctedFan1" data-i18n="mcz-out.command.DuctedFan1"></option>
+            <option value="DuctedFan2" data-i18n="mcz-out.command.DuctedFan2"></option>
+            <option value="Eco_Mode" data-i18n="mcz-out.command.Eco_Mode"></option>
+            <option value="Silent_Mode" data-i18n="mcz-out.command.Silent_Mode"></option>
+            <option value="Active_Mode" data-i18n="mcz-out.command.Active_Mode"></option>
+            <option value="Control_Mode" data-i18n="mcz-out.command.Control_Mode"></option>
+            <option value="Chronostat" data-i18n="mcz-out.command.Chronostat"></option>
+            <option value="Sleep" data-i18n="mcz-out.command.Sleep"></option>
+            <option value="Summer_Mode" data-i18n="mcz-out.command.Summer_Mode"></option>
+            <option value="AntiFreeze" data-i18n="mcz-out.command.AntiFreeze"></option>
+            <option value="Sound_Effects" data-i18n="mcz-out.command.Sound_Effects"></option>
+            <option value="Reset_Alarm" data-i18n="mcz-out.command.Reset_Alarm"></option>
+            <option value="Reset_Active" data-i18n="mcz-out.command.Reset_Active"></option>
         </select>
     </div>
     <div class="form-row">
         <label for="node-input-payloadType"><i class="fa fa-envelope"></i> <span data-i18n="mcz-out.label.value"></span></label>
         <select id="node-input-payloadType" style="width:70%;">
-            <option value="msg">-- From msg.payload.value --</option>
-            <option value="fixed">Fixed value</option>
+            <option value="msg" data-i18n="mcz-out.label.valueFrom"></option>
+            <option value="fixed" data-i18n="mcz-out.label.valueFixed"></option>
         </select>
     </div>
     <div class="form-row" id="row-fixed-value">
         <label for="node-input-fixedValue"><i class="fa fa-pencil"></i> <span data-i18n="mcz-out.label.fixedValue"></span></label>
-        <input type="text" id="node-input-fixedValue" placeholder="e.g. 1, 21.5, ON, OFF" style="width:70%;">
+        <input type="text" id="node-input-fixedValue" data-i18n="[placeholder]mcz-out.label.fixedValuePlaceholder" style="width:70%;">
     </div>
 </script>
 
 <script type="text/html" data-help-name="mcz-out">
-    <p>Write node for MCZ stoves. Sends write and execution commands to the MCZ Cloud API.</p>
-    <h3>Settings</h3>
-    <ul>
-        <li><b>Configuration</b>: The configuration node associated with the stove.</li>
-    </ul>
-    <h3>Input</h3>
-    <p>This node processes two types of <code>msg.payload</code> to send commands to the server:</p>
-    <ul>
-        <li><b>Object Format (Recommended):</b><br/>
-            <code>{ "command": "Power", "value": 1 }</code><br/>
-            Available commands: <code>Power, Temperature, Power_Level, Fan_State, DuctedFan1, DuctedFan2, Eco_Mode, Silent_Mode, Sleep, etc.</code><br/>
-            The node automatically converts this JSON object into the correct raw string for the API.
-            Depends on the command, the value can be a string or a number and sometimes a number needs to be multiplied by 2.
-        </li>
-        <li><b>Raw String Format:</b><br/>
-            Pass the raw Socket.IO string directly (e.g. <code>C|WriteParametri|34|1</code>). Useful for unsupported features or unmapped diagnostic codes.
-        </li>
-    </ul>
+    <div data-i18n="[html]mcz-out.help"></div>
 </script>

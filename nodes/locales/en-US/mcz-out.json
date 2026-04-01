@@ -2,10 +2,40 @@
     "mcz-out": {
         "label": {
             "name": "Name",
+            "namePlaceholder": "Name",
             "stoveConfig": "Configuration",
             "command": "Command",
+            "commandFrom": "-- From msg.payload.command --",
             "value": "Value",
-            "fixedValue": "Fixed Value"
-        }
+            "valueFrom": "-- From msg.payload.value --",
+            "valueFixed": "Fixed value",
+            "fixedValue": "Fixed Value",
+            "fixedValuePlaceholder": "e.g. 1, 21.5, ON, OFF"
+        },
+        "command": {
+            "Power": "Power (ON/OFF)",
+            "Temperature": "Temperature (°C)",
+            "Boiler_Setpoint": "Boiler Setpoint (°C)",
+            "Power_Level": "Power Level (1-5)",
+            "Fan_State": "Fan State (0-6)",
+            "DuctedFan1": "Ducted Fan 1 (0-6)",
+            "DuctedFan2": "Ducted Fan 2 (0-6)",
+            "Eco_Mode": "Eco Mode (ON/OFF)",
+            "Silent_Mode": "Silent Mode (ON/OFF)",
+            "Active_Mode": "Active Mode (ON/OFF)",
+            "Control_Mode": "Control Mode (ON/OFF)",
+            "Chronostat": "Chronostat (ON/OFF)",
+            "Sleep": "Sleep (Minutes)",
+            "Summer_Mode": "Summer Mode (ON/OFF)",
+            "AntiFreeze": "AntiFreeze Temp (°C)",
+            "Sound_Effects": "Sound Effects (ON/OFF)",
+            "Reset_Alarm": "Reset Alarm (Trigger)",
+            "Reset_Active": "Reset Active (Trigger)"
+        },
+        "status": {
+            "noConfig": "No configuration",
+            "sendError": "Send error"
+        },
+        "help": "<p>Write node for MCZ stoves. Sends commands to the MCZ Cloud API.</p><h3>Settings</h3><ul><li><b>Configuration</b>: The configuration node associated with the stove.</li></ul><h3>Input</h3><p>Two <code>msg.payload</code> formats are accepted:</p><ul><li><b>Object (recommended):</b> <code>{ \"command\": \"Power\", \"value\": 1 }</code>. The node builds the correct raw string automatically.</li><li><b>Raw string:</b> Pass the Socket.IO string directly (e.g. <code>C|WriteParametri|34|1</code>).</li></ul><h3>Output</h3><p>On every successful send, the node emits a confirmation message:</p><ul><li><code>msg.topic</code>: <code>mcz/SERIALNUMBER/command</code></li><li><code>msg.payload</code>: <code>{ command, value, raw }</code></li></ul>"
     }
 }

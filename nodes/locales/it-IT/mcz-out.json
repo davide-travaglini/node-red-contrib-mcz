@@ -2,10 +2,40 @@
     "mcz-out": {
         "label": {
             "name": "Nome",
+            "namePlaceholder": "Nome",
             "stoveConfig": "Configurazione",
             "command": "Comando",
+            "commandFrom": "-- Da msg.payload.command --",
             "value": "Valore input",
-            "fixedValue": "Valore Fisso"
-        }
+            "valueFrom": "-- Da msg.payload.value --",
+            "valueFixed": "Valore fisso",
+            "fixedValue": "Valore Fisso",
+            "fixedValuePlaceholder": "es. 1, 21.5, ON, OFF"
+        },
+        "command": {
+            "Power": "Accensione (ON/OFF)",
+            "Temperature": "Temperatura (°C)",
+            "Boiler_Setpoint": "Setpoint caldaia (°C)",
+            "Power_Level": "Livello di potenza (1-5)",
+            "Fan_State": "Stato ventola (0-6)",
+            "DuctedFan1": "Ventola canalizzata 1 (0-6)",
+            "DuctedFan2": "Ventola canalizzata 2 (0-6)",
+            "Eco_Mode": "Modalità Eco (ON/OFF)",
+            "Silent_Mode": "Modalità silenziosa (ON/OFF)",
+            "Active_Mode": "Modalità attiva (ON/OFF)",
+            "Control_Mode": "Modalità controllo (ON/OFF)",
+            "Chronostat": "Cronostat (ON/OFF)",
+            "Sleep": "Sleep (Minuti)",
+            "Summer_Mode": "Modalità estate (ON/OFF)",
+            "AntiFreeze": "Temp. antigelo (°C)",
+            "Sound_Effects": "Effetti sonori (ON/OFF)",
+            "Reset_Alarm": "Reset allarme (Trigger)",
+            "Reset_Active": "Reset attivo (Trigger)"
+        },
+        "status": {
+            "noConfig": "Nessuna configurazione",
+            "sendError": "Errore invio"
+        },
+        "help": "<p>Nodo di scrittura per stufe MCZ. Invia comandi al Cloud API MCZ.</p><h3>Impostazioni</h3><ul><li><b>Configurazione</b>: Il nodo di configurazione associato alla stufa.</li></ul><h3>Ingresso</h3><p>Sono accettati due formati di <code>msg.payload</code>:</p><ul><li><b>Oggetto (consigliato):</b> <code>{ \"command\": \"Power\", \"value\": 1 }</code>. Il nodo costruisce automaticamente la stringa corretta per l'API.</li><li><b>Stringa grezza:</b> Passa la stringa Socket.IO direttamente (es. <code>C|WriteParametri|34|1</code>).</li></ul><h3>Uscita</h3><p>Al termine di ogni invio riuscito, il nodo emette un messaggio di conferma:</p><ul><li><code>msg.topic</code>: <code>mcz/SERIALE/command</code></li><li><code>msg.payload</code>: <code>{ command, value, raw }</code></li></ul>"
     }
 }

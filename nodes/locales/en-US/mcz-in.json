@@ -2,11 +2,18 @@
     "mcz-in": {
         "label": {
             "name": "Name",
+            "namePlaceholder": "Name",
             "stoveConfig": "Configuration",
             "outputRaw": "Output raw data",
             "outputRawTip": "Appends msg.raw to the output",
             "enableHaDiscovery": "HA Discovery",
             "enableHaDiscoveryTip": "Emit MQTT Discovery payload on connect"
-        }
+        },
+        "status": {
+            "noConfig": "No configuration",
+            "waiting": "Waiting…",
+            "stopped": "Stopped"
+        },
+        "help": "<p>Read node for MCZ stoves. Receives real-time state from the cloud.</p><h3>Settings</h3><ul><li><b>Configuration</b>: The configuration node representing your stove.</li></ul><h3>Output 1 — Telemetry</h3><ul><li><code>msg.topic</code>: <code>mcz/SERIALNUMBER</code></li><li><code>msg.payload</code>: Parsed structured data (temperatures, fan states, etc.).</li><li><code>msg.raw</code> (optional): Raw pipe-separated string from the MCZ cloud.</li><li>On connect with HA Discovery enabled: emits the MQTT Auto-Discovery config payload.</li></ul><h3>Output 2 — Events</h3><p>System events: <code>connect</code>, <code>disconnect</code>, <code>error</code>, <code>reconnecting</code>.</p><ul><li><code>msg.topic</code>: <code>mcz/SERIALNUMBER/event</code></li><li><code>msg.payload.event</code>: event type string.</li></ul><h3>Input</h3><p>Send strings in <code>msg.payload</code> to control the connection:</p><ul><li><code>\"connect\"</code>: Connects the socket to the stove</li><li><code>\"disconnect\"</code>: Disconnects the socket</li><li><code>\"get\"</code>: Requests an immediate update (useful when auto-polling is 0)</li></ul>"
     }
 }

@@ -2,11 +2,18 @@
     "mcz-in": {
         "label": {
             "name": "Nome",
+            "namePlaceholder": "Nome",
             "stoveConfig": "Configurazione",
             "outputRaw": "Output dati raw",
             "outputRawTip": "Aggiunge la proprietà msg.raw in uscita",
             "enableHaDiscovery": "HA Discovery",
             "enableHaDiscoveryTip": "Invia il payload MQTT Discovery all'avvio"
-        }
+        },
+        "status": {
+            "noConfig": "Nessuna configurazione",
+            "waiting": "In attesa…",
+            "stopped": "Fermato"
+        },
+        "help": "<p>Nodo di lettura per stufe MCZ. Riceve lo stato in tempo reale dal cloud.</p><h3>Impostazioni</h3><ul><li><b>Configurazione</b>: Il nodo di configurazione che rappresenta la stufa.</li></ul><h3>Uscita 1 — Telemetria</h3><ul><li><code>msg.topic</code>: <code>mcz/SERIALE</code></li><li><code>msg.payload</code>: Dati strutturati parsati (temperature, stati ventola, ecc.).</li><li><code>msg.raw</code> (opzionale): Stringa grezza dal cloud MCZ.</li><li>All'avvio con HA Discovery abilitato: emette il payload di Auto-Discovery MQTT.</li></ul><h3>Uscita 2 — Eventi</h3><p>Eventi di sistema: <code>connect</code>, <code>disconnect</code>, <code>error</code>, <code>reconnecting</code>.</p><ul><li><code>msg.topic</code>: <code>mcz/SERIALE/event</code></li><li><code>msg.payload.event</code>: tipo di evento.</li></ul><h3>Ingresso</h3><p>Invia stringhe in <code>msg.payload</code> per controllare la connessione:</p><ul><li><code>\"connect\"</code>: Connette il socket alla stufa</li><li><code>\"disconnect\"</code>: Disconnette il socket</li><li><code>\"get\"</code>: Richiede un aggiornamento immediato (utile se il polling automatico è 0)</li></ul>"
     }
 }
