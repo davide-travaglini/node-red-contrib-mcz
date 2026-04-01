@@ -2,10 +2,13 @@
     "mcz-config": {
         "label": {
             "name": "Name",
+            "namePlaceholder": "Name",
             "server": "Server",
             "interval": "Interval (s)",
             "serialNumber": "Serial Number",
+            "serialNumberPlaceholder": "e.g. 2105149910003",
             "macAddress": "MAC Address",
+            "macAddressPlaceholder": "e.g. 4A3FDAA538CD",
             "template": "Template",
             "customJson": "JSON Custom",
             "intervalTip": "(0 = Polling Disabled. Use 'get' payload in Read node)",
@@ -17,6 +20,7 @@
             "idro": "Idro — Hydro stove (puffer / boiler)",
             "musa_hydro": "Musa Hydro — Hydro stove with 3-way valve + pump (Musa, Club, Suite)",
             "custom": "Custom JSON"
-        }
+        },
+        "help": "<p>Configuration node representing a single MCZ pellet stove connection. Create one per physical stove.</p><h3>Connection</h3><ul><li><b>Server</b>: MCZ cloud URL (default: http://app.mcz.it:9000) or local IP/port.</li><li><b>Serial Number</b>: The 13-digit serial number printed on the stove label.</li><li><b>MAC Address</b>: The MAC address of the stove WiFi module (no colons, e.g. 4A3FDAA538CD).</li><li><b>Interval (s)</b>: Auto-polling frequency in seconds. Set to 0 to disable and use manual <code>get</code> trigger instead.</li></ul><h3>Template</h3><p>Choose the parsing template that matches your stove model:</p><ul><li><b>Aria</b>: Standard air stoves with a single ambient fan.</li><li><b>Aria Comfort Air</b>: Air stoves with multi-zone ducted fans.</li><li><b>Idro</b>: Hydro stoves with puffer or boiler (no 3-way valve).</li><li><b>Musa Hydro</b>: Hydro stoves with 3-way valve and internal pump (Musa, Club, Suite).</li><li><b>Custom JSON</b>: Provide your own field mapping. Use the <b>MCZ Debug</b> node to identify unknown positions.</li></ul>"
     }
 }

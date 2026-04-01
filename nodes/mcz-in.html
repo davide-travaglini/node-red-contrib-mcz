@@ -4,7 +4,7 @@
         color: '#E84A36',
         icon: 'font-awesome/fa-fire',
         inputs: 1,
-        outputs: 1,
+        outputs: 2,
         defaults: {
             name: { value: '' },
             stoveConfig: { value: '', type: 'mcz-config', required: true },
@@ -23,7 +23,7 @@
 <script type="text/html" data-template-name="mcz-in">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-in.label.name"></span></label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]mcz-in.label.namePlaceholder">
     </div>
     <div class="form-row">
         <label for="node-input-stoveConfig"><i class="fa fa-cogs"></i> <span data-i18n="mcz-in.label.stoveConfig"></span></label>
@@ -42,22 +42,5 @@
 </script>
 
 <script type="text/html" data-help-name="mcz-in">
-    <p>Read node for MCZ stoves. Receives real-time state from the cloud.</p>
-    <h3>Settings</h3>
-    <ul>
-        <li><b>Configuration</b>: The configuration node representing your stove.</li>
-    </ul>
-    <h3>Output</h3>
-    <ul>
-        <li><code>msg.topic</code> will be <code>mcz/SERIALNUMBER</code></li>
-        <li><code>msg.payload</code> will contain parsed structured data (e.g. temperatures, fan states).</li>
-        <li><code>msg.raw</code> (optional) raw string directly from the MCZ cloud.</li>
-    </ul>
-    <h3>Input</h3>
-    <p>You can send commands in <code>msg.payload</code> to control the connection behavior:</p>
-    <ul>
-        <li><code>"connect"</code>: Connects the socket to the stove</li>
-        <li><code>"disconnect"</code>: Disconnects the socket</li>
-        <li><code>"get"</code>: Requests an immediate update (especially useful if auto-polling is set to 0)</li>
-    </ul>
+    <div data-i18n="[html]mcz-in.help"></div>
 </script>

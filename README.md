@@ -5,7 +5,7 @@ This node package allows you to monitor stove metrics (temperatures, fans, alarm
 
 > **Note**: This is for stoves using the *old* MCZ app (which communicates via Socket.IO). It is **not** designed for the newer MCZ Maestro REST architecture, although many concepts are similar.
 
-> **V1.0 Update**: The package now includes fully integrated **Home Assistant MQTT Auto-Discovery**, robust connection handling with sanitization, and native bilingual UI support (**English / Italian**).
+> **V1.1**: Second output on `mcz-in` for system events, confirmation output on `mcz-out`, full bilingual UI (**English / Italian**) with translated labels, help panels and command dropdowns, and a complete unit-test suite (109 tests).
 
 ---
 
@@ -44,13 +44,19 @@ This behaves like a physical device connection. You must configure **one config 
 ### 2. Read Node (`mcz-in`)
 Receives telemetry data from the associated `mcz-config` node and pushes it into your flow.
 
-**Outputs:**
+**Output 1 — Telemetry:**
 - `msg.topic`: `mcz/SERIAL_NUMBER`
 - `msg.payload`: A structured JSON object containing all the parsed metrics (Temperatures, Fan RPM, Potency, Active States).
 - `msg.raw`: A raw pipe-separated string received from the cloud (if "Output raw data" is checked).
+- On connect with HA Discovery enabled: emits the MQTT Auto-Discovery config payload.
+
+**Output 2 — Events:**
+System-level events: `connect`, `disconnect`, `error`, `reconnecting`.
+- `msg.topic`: `mcz/SERIAL_NUMBER/event`
+- `msg.payload.event`: event type string.
 
 **Home Assistant (MQTT Auto-Discovery):**
-By checking the **"HA Discovery"** box in the node settings, `mcz-in` will emit an MQTT Auto-Discovery configuration payload whenever it connects to the cloud. By routing this output directly to a standard Node-RED **MQTT Out** node (with a blank topic), your MCZ Stove will instantly and automatically pop up as a fully-featured native `Climate` Thermostat inside Home Assistant, requiring zero YAML configuration.
+By checking the **"HA Discovery"** box in the node settings, `mcz-in` will emit an MQTT Auto-Discovery configuration payload on **Output 1** whenever it connects to the cloud. By routing this output directly to a standard Node-RED **MQTT Out** node (with a blank topic), your MCZ Stove will instantly and automatically pop up as a fully-featured native `Climate` Thermostat inside Home Assistant, requiring zero YAML configuration. Fan mode labels use the human-readable strings from the built-in `FAN_STATES` map (`"Disabled"`, `"Level 1"` … `"Automatic"`).
 
 **Manual Control (Input):**
 You can interact with the underlying Socket.IO connection by injecting strings into the `mcz-in` node's `msg.payload`:
@@ -87,15 +93,27 @@ msg.payload = { "command": "Eco_Mode", "value": "ON" };
 
 **Supported Commands:**
 - `Power` (1/0 or ON/OFF)
-- `Temperature` (e.g. 21.5)
-- `Boiler_Setpoint` (e.g. 50)
+- `Temperature` (e.g. 21.5 — auto-multiplied ×2 internally)
+- `Boiler_Setpoint` (e.g. 50 — hydro stoves only, ×2 encoding)
 - `Power_Level` (1 to 5)
-- `Fan_State` (0 to 6)
+- `Fan_State` (0 to 6 — 0=Disabled, 6=Automatic)
 - `DuctedFan1` / `DuctedFan2` (0 to 6)
 - `Eco_Mode` (1/0 or ON/OFF)
 - `Silent_Mode` (1/0 or ON/OFF)
-- `Sleep` 
-- `Reset_Alarm`
+- `Active_Mode` (1/0 or ON/OFF)
+- `Control_Mode` (1/0 or ON/OFF)
+- `Chronostat` (1/0 or ON/OFF)
+- `Sleep` (minutes as integer)
+- `Summer_Mode` (1/0 or ON/OFF)
+- `AntiFreeze` (temperature setpoint)
+- `Sound_Effects` (1/0 or ON/OFF)
+- `Reset_Alarm` (trigger — value ignored)
+- `Reset_Active` (trigger — value ignored)
+
+**Output:**
+On every successful send, `mcz-out` emits a confirmation message:
+- `msg.topic`: `mcz/SERIAL_NUMBER/command`
+- `msg.payload`: `{ command, value, raw }` — the command name, value used, and raw Socket.IO string sent.
 
 **Usage (Raw Strings):**
 If you know undocumented codes, you can pass a direct pipeline string to `msg.payload`. The `mcz-out` node will forward it directly.
@@ -107,7 +125,7 @@ msg.payload = "C|WriteParametri|34|1";
 ## Custom Templates & Fields Mapping
 
 MCZ cloud socket communication responds with a long string of HEX values separated by pipes (`C|00|00|05|00|4A|FF|...`).
-By default, this package includes internal parsing maps for standard *Aria* and *Idro* stoves.
+By default, this package includes internal parsing maps for all four built-in templates (*Aria*, *Aria Comfort Air*, *Idro*, *Musa Hydro*).
 
 If you have a customized stove or want to read undocumented fields, you can select the **Custom** template in the configuration node and supply your own mapping JSON.
 
@@ -135,6 +153,7 @@ A template is a JSON object with an array of `fields`. The package's parser loop
   - Use `"map": "FAN_STATES"` to use one of the built-in system dictionaries.
   - Or define inline mapping using `"values": { "0": "String1", "1": "String2" }` exactly as shown in the example above.
 - `range_offset`: Transforms an internal value using ranges (useful for power levels).
+- `hours`: Converts an integer to an `HH:MM` time string.
 - `clock`: Merges multiple positions to form a readable Date String.
 
 This fully eliminates the need for any internal hardcoding if MCZ updates firmware, you can just tweak your Custom JSON right from the Node-RED panel.
@@ -149,7 +168,7 @@ Here are a few quick scenarios to integrate this package (you can copy-paste the
 Configure your config node to fetch data every 30s. Connect an **mcz-in** to read the state and an **mcz-debug** node to spot unknown fields if you notice missing data in your specific stove model.
 
 ```json
-[{"id":"mcz_in_1","type":"mcz-in","name":"My Stove","stoveConfig":"config_1","topic":"","outputRaw":false,"x":200,"y":100,"wires":[["debug_state"]]},{"id":"debug_state","type":"debug","name":"State JSON","active":true,"tosidebar":true,"console":false,"complete":"payload","targetType":"msg","x":400,"y":100,"wires":[]},{"id":"mcz_debug_1","type":"mcz-debug","name":"Debug Raw","stoveConfig":"config_1","x":210,"y":160,"wires":[["debug_raw"]]},{"id":"debug_raw","type":"debug","name":"Position Array","active":false,"tosidebar":true,"console":false,"complete":"payload.flat_dec","targetType":"msg","x":410,"y":160,"wires":[]}]
+[{"id":"mcz_in_1","type":"mcz-in","name":"My Stove","stoveConfig":"config_1","topic":"","outputRaw":false,"x":200,"y":100,"wires":[["debug_state"],[]]},{"id":"debug_state","type":"debug","name":"State JSON","active":true,"tosidebar":true,"console":false,"complete":"payload","targetType":"msg","x":400,"y":100,"wires":[]},{"id":"mcz_debug_1","type":"mcz-debug","name":"Debug Raw","stoveConfig":"config_1","x":210,"y":160,"wires":[["debug_raw"]]},{"id":"debug_raw","type":"debug","name":"Position Array","active":false,"tosidebar":true,"console":false,"complete":"payload.flat_dec","targetType":"msg","x":410,"y":160,"wires":[]}]
 ```
 
 ### 2. Manual Polling
@@ -164,8 +183,20 @@ Then, set up an `Inject` node to trigger `"get"` via msg.payload:
 Use standard Node-RED dashboard widgets (like numeric inputs or sliders) to control the target temperature and send it to the stove dynamically.
 
 ```json
-[{"id":"dash_temp","type":"ui_numeric","name":"Target Temp","group":"dash_group","order":1,"format":"{{value}}","min":10,"max":35,"step":0.5,"x":210,"y":300,"wires":[["function_temp"]]},{"id":"function_temp","type":"function","name":"Format Command","func":"msg.payload = {\n    command: \"Temperature\",\n    value: msg.payload\n};\nreturn msg;","outputs":1,"x":410,"y":300,"wires":[["mcz_out_1"]]},{"id":"mcz_out_1","type":"mcz-out","name":"Set Stove","stoveConfig":"config_1","command":"","commandValue":"","x":600,"y":300,"wires":[]}]
+[{"id":"dash_temp","type":"ui_numeric","name":"Target Temp","group":"dash_group","order":1,"format":"{{value}}","min":10,"max":35,"step":0.5,"x":210,"y":300,"wires":[["function_temp"]]},{"id":"function_temp","type":"function","name":"Format Command","func":"msg.payload = {\n    command: \"Temperature\",\n    value: msg.payload\n};\nreturn msg;","outputs":1,"x":410,"y":300,"wires":[["mcz_out_1"]]},{"id":"mcz_out_1","type":"mcz-out","name":"Set Stove","stoveConfig":"config_1","command":"","commandValue":"","x":600,"y":300,"wires":[[]]}]
 ```
+
+## Testing
+
+The package includes a unit-test suite covering the parser, commands, maps, and template loading:
+
+```bash
+npm test
+```
+
+Tests use **Mocha** and Node.js built-in `assert`. No physical stove or network connection is required — all tests use synthetic hex strings and known-good inputs.
+
+---
 
 ## Contributing
 Pull requests to support more proprietary data formats, templates, and newer firmware versions are heavily encouraged! 

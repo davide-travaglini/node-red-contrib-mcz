@@ -11,7 +11,7 @@ module.exports = function(RED) {
 
         const cfg = RED.nodes.getNode(config.stoveConfig);
         if (!cfg) {
-            node.status({ fill: 'red', shape: 'ring', text: 'Nessuna configurazione' });
+            node.status({ fill: 'red', shape: 'ring', text: RED._('mcz-out.status.noConfig') });
             node.error('mcz-out: config node is missing');
             return;
         }
@@ -65,11 +65,12 @@ module.exports = function(RED) {
             try {
                 cfg.writeCommand(commandStr);
                 node.status({ fill: 'green', shape: 'dot', text: `Sent: ${commandStr.substring(0, 15)}...` });
+                node.send({ topic: `mcz/${cfg.serialNumber}/command`, payload: { command: cmdName, value: cmdValue, raw: commandStr } });
                 setTimeout(() => {
                     node.status({ fill: 'blue', shape: 'dot', text: 'Ready' });
                 }, 2000);
             } catch (err) {
-                node.status({ fill: 'red', shape: 'ring', text: 'Errore invio' });
+                node.status({ fill: 'red', shape: 'ring', text: RED._('mcz-out.status.sendError') });
                 node.error(`mcz-out: Error writing command: ${err.message}`);
             }
         });

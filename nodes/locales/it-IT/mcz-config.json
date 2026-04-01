@@ -2,10 +2,13 @@
     "mcz-config": {
         "label": {
             "name": "Nome",
+            "namePlaceholder": "Nome",
             "server": "Server",
             "interval": "Intervallo (s)",
             "serialNumber": "Numero Seriale",
+            "serialNumberPlaceholder": "es. 2105149910003",
             "macAddress": "Indirizzo MAC",
+            "macAddressPlaceholder": "es. 4A3FDAA538CD",
             "template": "Template",
             "customJson": "JSON Custom",
             "intervalTip": "(0 = Polling disattivato. Usa 'get' da un nodo Inject)",
@@ -17,6 +20,7 @@
             "idro": "Idro — Stufa idro (puffer / radiatori)",
             "musa_hydro": "Musa Hydro — Stufa idro con valvola a 3 vie + pompa (es. Musa, Club)",
             "custom": "JSON Custom"
-        }
+        },
+        "help": "<p>Nodo di configurazione che rappresenta la connessione a una singola stufa MCZ. Crea un nodo per ogni stufa fisica.</p><h3>Connessione</h3><ul><li><b>Server</b>: URL del cloud MCZ (default: http://app.mcz.it:9000) o IP/porta locale.</li><li><b>Numero Seriale</b>: Il numero seriale a 13 cifre riportato sull'etichetta della stufa.</li><li><b>Indirizzo MAC</b>: Il MAC address del modulo WiFi della stufa (senza i due punti, es. 4A3FDAA538CD).</li><li><b>Intervallo (s)</b>: Frequenza di polling automatico in secondi. Impostare 0 per disabilitare e usare il trigger manuale <code>get</code>.</li></ul><h3>Template</h3><p>Scegli il template di parsing corrispondente al tuo modello di stufa:</p><ul><li><b>Aria</b>: Stufe ad aria standard con singola ventola ambiente.</li><li><b>Aria Comfort Air</b>: Stufe ad aria con ventole canalizzate multizona.</li><li><b>Idro</b>: Stufe a idro con puffer o bollitore (senza valvola a 3 vie).</li><li><b>Musa Hydro</b>: Stufe a idro con valvola a 3 vie e pompa interna (Musa, Club, Suite).</li><li><b>JSON Custom</b>: Fornisci la tua mappatura personalizzata. Usa il nodo <b>MCZ Debug</b> per identificare le posizioni sconosciute.</li></ul>"
     }
 }

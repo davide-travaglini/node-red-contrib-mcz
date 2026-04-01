@@ -30,7 +30,7 @@
 <script type="text/html" data-template-name="mcz-config">
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcz-config.label.name"></span></label>
-        <input type="text" id="node-config-input-name" placeholder="Name">
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]mcz-config.label.namePlaceholder">
     </div>
     <div class="form-row">
         <label for="node-config-input-server"><i class="fa fa-server"></i> <span data-i18n="mcz-config.label.server"></span></label>
@@ -44,11 +44,11 @@
     <hr>
     <div class="form-row">
         <label for="node-config-input-serialNumber"><i class="fa fa-barcode"></i> <span data-i18n="mcz-config.label.serialNumber"></span></label>
-        <input type="text" id="node-config-input-serialNumber" placeholder="e.g. 2105149910003">
+        <input type="text" id="node-config-input-serialNumber" data-i18n="[placeholder]mcz-config.label.serialNumberPlaceholder">
     </div>
     <div class="form-row">
         <label for="node-config-input-macAddress"><i class="fa fa-wifi"></i> <span data-i18n="mcz-config.label.macAddress"></span></label>
-        <input type="text" id="node-config-input-macAddress" placeholder="e.g. 4A3FDAA538CD">
+        <input type="text" id="node-config-input-macAddress" data-i18n="[placeholder]mcz-config.label.macAddressPlaceholder">
     </div>
     <div class="form-row">
         <label for="node-config-input-templateType"><i class="fa fa-list"></i> <span data-i18n="mcz-config.label.template"></span></label>
@@ -59,12 +59,14 @@
             <option value="musa_hydro" data-i18n="mcz-config.template.musa_hydro"></option>
             <option value="custom" data-i18n="mcz-config.template.custom"></option>
         </select>
-        <div style="margin-top:4px;font-size:0.82em;color:#888" data-i18n="mcz-config.label.templateTip">
-            Not sure? Use an MCZ Debug node to inspect live positions and identify your model.
-        </div>
+        <div style="margin-top:4px;font-size:0.82em;color:#888" data-i18n="mcz-config.label.templateTip"></div>
     </div>
     <div class="form-row" id="mcz-custom-row" style="display:none">
         <label for="node-config-input-customTemplate"><i class="fa fa-code"></i> <span data-i18n="mcz-config.label.customJson"></span></label>
         <textarea id="node-config-input-customTemplate" style="width:100%;height:150px;font-family:monospace;font-size:0.85em;" placeholder='{"name":"Custom","fields":[...]}'></textarea>
     </div>
+</script>
+
+<script type="text/html" data-help-name="mcz-config">
+    <div data-i18n="[html]mcz-config.help"></div>
 </script>
