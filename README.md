@@ -1,7 +1,7 @@
 # node-red-contrib-mcz
 
-[![npm version](https://img.shields.io/npm/v/node-red-contrib-officedocs.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
-[![npm downloads](https://img.shields.io/npm/dm/node-red-contrib-officedocs.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
+[![npm version](https://img.shields.io/npm/v/node-red-contrib-mcz.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
+[![npm downloads](https://img.shields.io/npm/dm/node-red-contrib-mcz.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
 [![Node.js ≥16](https://img.shields.io/badge/node-%3E%3D16-brightgreen.svg)](https://nodejs.org)
 [![Node-RED ≥2](https://img.shields.io/badge/node--red-%3E%3D2.0-red.svg)](https://nodered.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
