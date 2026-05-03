@@ -1,5 +1,13 @@
 # node-red-contrib-mcz
 
+[![npm version](https://img.shields.io/npm/v/node-red-contrib-officedocs.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
+[![npm downloads](https://img.shields.io/npm/dm/node-red-contrib-officedocs.svg)](https://www.npmjs.com/package/node-red-contrib-mcz)
+[![Node.js ≥16](https://img.shields.io/badge/node-%3E%3D16-brightgreen.svg)](https://nodejs.org)
+[![Node-RED ≥2](https://img.shields.io/badge/node--red-%3E%3D2.0-red.svg)](https://nodered.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+If you'd like to support me, [![Ko-fi](https://img.shields.io/badge/Buy%20me%20a%20coffee-%23FF5E5B?logo=ko-fi&logoColor=white&style=flat)](https://ko-fi.com/davidetravaglini)
+
 A complete Node-RED module for connecting to **legacy MCZ pellet stoves** via the official MCZ Cloud API (Socket.IO `app.mcz.it:9000`) it also works with the local IP address of the stove `192.168.120.1:81` or `[IP_ADDRESS:PORT]`.
 This node package allows you to monitor stove metrics (temperatures, fans, alarms) in real-time and send logical execution commands (power on/off, temperature setpoint, etc.).
 
