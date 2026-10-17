@@ -44,10 +44,12 @@ module.exports = function(RED) {
 
             let commandStr = null;
 
-            // Scenario 1: Fully raw SocketIO string bypass (e.g. "C|WriteParametri|...")
-            if ((!config.command || config.command === '') && typeof msg.payload === 'string' && msg.payload.includes('|')) {
+            // Scenario 1: Fully raw SocketIO string bypass (e.g. "C|WriteParametri|..." or
+            // a bare "RecuperoParametri"-style request with no pipe separator)
+            if ((!config.command || config.command === '') && typeof msg.payload === 'string' &&
+                (msg.payload.includes('|') || msg.payload.startsWith('Recupero'))) {
                 commandStr = msg.payload;
-            } 
+            }
             // Scenario 2: Structured command builder
             else if (cmdName && cmdValue !== null && cmdValue !== undefined) {
                 commandStr = buildCommandString(cmdName, cmdValue);
@@ -63,7 +65,13 @@ module.exports = function(RED) {
 
             // Invia il comando di scrittura
             try {
-                cfg.writeCommand(commandStr);
+                if (!cfg.connected) {
+                    node.error('mcz-out: stove is not connected, command dropped');
+                    node.status({ fill: 'red', shape: 'ring', text: 'Not connected' });
+                    return;
+                }
+
+                cfg.sendRaw(commandStr);
                 node.status({ fill: 'green', shape: 'dot', text: `Sent: ${commandStr.substring(0, 15)}...` });
                 node.send({ topic: `mcz/${cfg.serialNumber}/command`, payload: { command: cmdName, value: cmdValue, raw: commandStr } });
                 setTimeout(() => {

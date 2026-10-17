@@ -83,6 +83,10 @@ module.exports = function(RED) {
                     if (node.outputRaw) msg.raw = evt.raw;
                     node.send([msg, null]);
                     break;
+                case 'parameters':
+                    setStatus('blue', 'dot', 'Parameters received');
+                    node.send([{ payload: evt.data, topic: `mcz/${evt.serialNumber}/parameters` }, null]);
+                    break;
                 case 'error':
                     setStatus('red', 'ring', `Error: ${evt.error}`);
                     node.send([null, { topic: `mcz/${evt.serialNumber}/event`, payload: evt }]);
@@ -112,8 +116,12 @@ module.exports = function(RED) {
                 case 'get':
                     cfg.requestInfo();
                     break;
+                case 'parameters':
+                case 'param':
+                    cfg.requestParameters();
+                    break;
                 default:
-                    node.warn(`mcz-in: Unknown command "${cmd}". Use connect / disconnect / get`);
+                    node.warn(`mcz-in: Unknown command "${cmd}". Use connect / disconnect / get / parameters`);
             }
         });
 

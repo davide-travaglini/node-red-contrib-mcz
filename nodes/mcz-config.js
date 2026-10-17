@@ -24,6 +24,9 @@ module.exports = function(RED) {
         node.socket = null;
         node.pollTimer = null;
         node.connected = false;
+        node.lastSeen = null;
+        node.lastReply = null;
+        node._lastRequestType = null; // 'data' | 'parameters' — tags the next 'rispondo' reply
 
         let parser = null;
         try {
@@ -72,6 +75,7 @@ module.exports = function(RED) {
 
             node.socket.on('connect', () => {
                 node.connected = true;
+                node.lastSeen = new Date();
                 node.log(`[mcz-config] Connected (SN=${node.serialNumber})`);
 
                 node.socket.emit('join', {
@@ -81,6 +85,9 @@ module.exports = function(RED) {
                 });
 
                 if (node.interval > 0) {
+                    // Mirrors the Android app: fetch configuration parameters once,
+                    // then start polling live telemetry.
+                    node.requestParameters();
                     node.requestInfo();
                     if (node.pollTimer) clearInterval(node.pollTimer);
                     node.pollTimer = setInterval(() => node.requestInfo(), node.interval * 1000);
@@ -112,12 +119,17 @@ module.exports = function(RED) {
             });
 
             node.socket.on('rispondo', (response) => {
+                node.lastReply = new Date();
                 const trama = (response && response.stringaRicevuta) || '';
                 if (!trama) return;
 
                 try {
                     const parsed = node.parser.parse(trama);
-                    node._emit({ event: 'data', serialNumber: node.serialNumber, data: parsed, raw: trama });
+                    // The cloud answers one request at a time on this single channel, so
+                    // we tag the reply with whatever request we last sent to tell a
+                    // parameters-dump apart from a live-telemetry reply.
+                    const eventType = node._lastRequestType === 'parameters' ? 'parameters' : 'data';
+                    node._emit({ event: eventType, serialNumber: node.serialNumber, data: parsed, raw: trama });
                 } catch (e) {
                     node.error(`[mcz-config] Parse error (SN=${node.serialNumber}): ${e.message}`);
                     node._emit({ event: 'error', serialNumber: node.serialNumber, error: e.message });
@@ -137,6 +149,7 @@ module.exports = function(RED) {
 
         node.requestInfo = function() {
             if (node.socket && node.socket.connected) {
+                node._lastRequestType = 'data';
                 node.socket.emit('chiedo', {
                     serialNumber: node.serialNumber,
                     macAddress: node.macAddress,
@@ -146,8 +159,24 @@ module.exports = function(RED) {
             }
         };
 
+        // Requests stove configuration parameters (as opposed to live telemetry),
+        // same call the Android app makes once after connecting.
+        node.requestParameters = function() {
+            if (node.socket && node.socket.connected) {
+                node._lastRequestType = 'parameters';
+                node.socket.emit('chiedo', {
+                    serialNumber: node.serialNumber,
+                    macAddress: node.macAddress,
+                    tipoChiamata: 0,
+                    richiesta: 'RecuperoParametri'
+                });
+                node.log(`[mcz-config] Requested parameters (SN=${node.serialNumber})`);
+            }
+        };
+
         node.writeCommand = function(command) {
             if (node.socket && node.socket.connected && command) {
+                node._lastRequestType = 'data';
                 node.socket.emit('chiedo', {
                     serialNumber: node.serialNumber,
                     macAddress: node.macAddress,
@@ -156,6 +185,10 @@ module.exports = function(RED) {
                 });
             }
         };
+
+        // Alias kept for callers that prefer a protocol-agnostic name — same
+        // transport as writeCommand, no separate implementation to keep in sync.
+        node.sendRaw = node.writeCommand;
 
         node.on('close', function(done) {
             node.disconnectStove();

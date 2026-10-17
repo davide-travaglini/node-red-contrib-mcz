@@ -71,6 +71,10 @@ You can interact with the underlying Socket.IO connection by injecting strings i
 - `"connect"`: Connects the Socket.IO client.
 - `"disconnect"`: Gracefully disconnects from the cloud.
 - `"get"`: Forces an immediate telemetry update. **(Required if `Interval` is set to `0` in your config).**
+- `"parameters"` (or `"param"`): Requests the stove's configuration parameters (as opposed to
+  live telemetry) — same call the Android app makes once right after connecting. Also runs
+  automatically on connect when `Interval > 0`. Replies come back on **Output 1** with
+  `msg.topic = mcz/SERIAL_NUMBER/parameters`.
 
 ### 3. Write Node (`mcz-out`)
 This node sends commands to the stove. You can configure the command you want to send directly **from the Node's UI** using dropdowns, or you can send dynamic payloads into it.
@@ -118,10 +122,21 @@ msg.payload = { "command": "Eco_Mode", "value": "ON" };
 - `Reset_Alarm` (trigger — value ignored)
 - `Reset_Active` (trigger — value ignored)
 
+Commands with a known safe range (`Temperature`, `Boiler_Setpoint`, `Power_Level`, `Fan_State`,
+`DuctedFan1`, `DuctedFan2`) are validated before sending — an out-of-range value is rejected
+(`buildCommandString` returns `null`, `mcz-out` logs an error) instead of being sent to the stove.
+`mcz-out` also refuses to send anything while the stove is disconnected, rather than silently
+dropping the command.
+
 **Output:**
 On every successful send, `mcz-out` emits a confirmation message:
 - `msg.topic`: `mcz/SERIAL_NUMBER/command`
 - `msg.payload`: `{ command, value, raw }` — the command name, value used, and raw Socket.IO string sent.
+
+**Raw command builders (`lib/commands.js`):**
+For undocumented or future parameters not in the table above, `buildRawWrite(id, value)` and
+`buildDiagnostic(id, value)` build a raw `WriteParametri`/`Diagnostica` string by numeric id —
+useful from a `function` node ahead of `mcz-out`.
 
 **Usage (Raw Strings):**
 If you know undocumented codes, you can pass a direct pipeline string to `msg.payload`. The `mcz-out` node will forward it directly.
@@ -160,6 +175,9 @@ A template is a JSON object with an array of `fields`. The package's parser loop
 - `map`: Extremely powerful. Maps an Integer to a readable string. 
   - Use `"map": "FAN_STATES"` to use one of the built-in system dictionaries.
   - Or define inline mapping using `"values": { "0": "String1", "1": "String2" }` exactly as shown in the example above.
+  - Add `"includeCode": true` to a field to get `{ code, label }` instead of just the label
+    string — e.g. `{ "code": 6, "label": "Automatic" }`. Off by default so existing templates
+    and flows that expect a plain string keep working unchanged.
 - `range_offset`: Transforms an internal value using ranges (useful for power levels).
 - `hours`: Converts an integer to an `HH:MM` time string.
 - `clock`: Merges multiple positions to form a readable Date String.
