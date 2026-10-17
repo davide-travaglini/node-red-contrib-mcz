@@ -32,7 +32,7 @@ The package provides 4 components:
 ### 1. Configuration Node (`mcz-config`)
 This behaves like a physical device connection. You must configure **one config node per stove**. The package natively supports **connecting to multiple stoves simultaneously** (e.g. your house and your vacation home); just create multiple config nodes and the underlying engine will multiplex the connections without conflicts.
 - **Serial Number (SN)**: The 13-digit serial number of your stove.
-- **MAC Address**: The MAC address of the stove Wi-Fi module (without colons, e.g. `4A3FDAA538CD`).
+- **MAC Address**: The MAC address of the stove Wi-Fi module (without colons, e.g. `XXXXXXXXXXXX`).
 - **Interval**: If $> 0$, the node will automatically request stove metrics every X seconds (Auto-Polling). If set to `0`, Auto-Polling is disabled.
 - **Template**: The stove dictionary template. Available options:
   - *Aria*: Air stoves with standard fan.
