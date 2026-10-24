@@ -18,56 +18,63 @@ module.exports = function(RED) {
 
         node.status({ fill: 'blue', shape: 'dot', text: 'Ready' });
 
-        node.on('input', function(msg) {
+        node.on('input', function(msg, send, done) {
+            try {
+                let cmdName = config.command;
+                let cmdValue = null;
 
-            let cmdName = config.command;
-            let cmdValue = null;
-
-            // Resolve name
-            if (!cmdName || cmdName === '') {
-                if (typeof msg.payload === 'object' && msg.payload.command !== undefined) {
-                    cmdName = msg.payload.command;
+                // Resolve name
+                if (!cmdName || cmdName === '') {
+                    if (typeof msg.payload === 'object' && msg.payload.command !== undefined) {
+                        cmdName = msg.payload.command;
+                    }
                 }
-            }
 
-            // Resolve value
-            if (config.payloadType === 'fixed') {
-                cmdValue = config.fixedValue;
-            } else {
-                if (typeof msg.payload === 'object' && msg.payload.value !== undefined) {
-                    cmdValue = msg.payload.value;
-                } else if (typeof msg.payload === 'string' || typeof msg.payload === 'number' || typeof msg.payload === 'boolean') {
-                    // Fallback to bare payload if no .value is passed but we need a value
-                    cmdValue = msg.payload;
+                // Resolve value
+                if (config.payloadType === 'fixed') {
+                    cmdValue = config.fixedValue;
+                } else {
+                    if (typeof msg.payload === 'object' && msg.payload.value !== undefined) {
+                        cmdValue = msg.payload.value;
+                    } else if (typeof msg.payload === 'string' || typeof msg.payload === 'number' || typeof msg.payload === 'boolean') {
+                        // Fallback to bare payload if no .value is passed but we need a value
+                        cmdValue = msg.payload;
+                    }
                 }
-            }
 
-            let commandStr = null;
+                let commandStr = null;
 
-            // Scenario 1: Fully raw SocketIO string bypass (e.g. "C|WriteParametri|..." or
-            // a bare "RecuperoParametri"-style request with no pipe separator)
-            if ((!config.command || config.command === '') && typeof msg.payload === 'string' &&
-                (msg.payload.includes('|') || msg.payload.startsWith('Recupero'))) {
-                commandStr = msg.payload;
-            }
-            // Scenario 2: Structured command builder
-            else if (cmdName && cmdValue !== null && cmdValue !== undefined) {
-                commandStr = buildCommandString(cmdName, cmdValue);
-                if (!commandStr) {
-                    node.error(`mcz-out: Failed to build command: invalid name or value for "${cmdName}"="${cmdValue}"`);
+                // Scenario 1: Fully raw SocketIO string bypass (e.g. "C|WriteParametri|..." or
+                // a bare "RecuperoParametri"-style request with no pipe separator)
+                if ((!config.command || config.command === '') && typeof msg.payload === 'string' &&
+                    (msg.payload.includes('|') || msg.payload.startsWith('Recupero'))) {
+                    commandStr = msg.payload;
+                }
+                // Scenario 2: Structured command builder
+                else if (cmdName && cmdValue !== null && cmdValue !== undefined) {
+                    commandStr = buildCommandString(cmdName, cmdValue);
+                    if (!commandStr) {
+                        const err = new Error(`mcz-out: Failed to build command: invalid name or value for "${cmdName}"="${cmdValue}"`);
+                        node.status({ fill: 'red', shape: 'ring', text: 'Invalid command' });
+                        if (done) return done(err);
+                        node.error(err.message, msg);
+                        return;
+                    }
+                }
+                else {
+                    const err = new Error('mcz-out: msg.payload must either be a raw string OR provide valid command/value via UI or msg.payload properties.');
+                    node.status({ fill: 'red', shape: 'ring', text: 'Invalid input' });
+                    if (done) return done(err);
+                    node.error(err.message, msg);
                     return;
                 }
-            } 
-            else {
-                node.error('mcz-out: msg.payload must either be a raw string OR provide valid command/value via UI or msg.payload properties.');
-                return;
-            }
 
-            // Invia il comando di scrittura
-            try {
+                // Invia il comando di scrittura
                 if (!cfg.connected) {
-                    node.error('mcz-out: stove is not connected, command dropped');
+                    const err = new Error('mcz-out: stove is not connected, command dropped');
                     node.status({ fill: 'red', shape: 'ring', text: 'Not connected' });
+                    if (done) return done(err);
+                    node.error(err.message, msg);
                     return;
                 }
 
@@ -77,9 +84,10 @@ module.exports = function(RED) {
                 setTimeout(() => {
                     node.status({ fill: 'blue', shape: 'dot', text: 'Ready' });
                 }, 2000);
+                if (done) done();
             } catch (err) {
                 node.status({ fill: 'red', shape: 'ring', text: RED._('mcz-out.status.sendError') });
-                node.error(`mcz-out: Error writing command: ${err.message}`);
+                if (done) done(err); else node.error(`mcz-out: Error writing command: ${err.message}`, msg);
             }
         });
 

@@ -100,28 +100,34 @@ module.exports = function(RED) {
 
         cfg.subscribe(onEvent);
 
-        node.on('input', function(msg) {
-            let cmd = '';
-            if (typeof msg.payload === 'string') cmd = msg.payload.toLowerCase().trim();
-            else if (msg.payload && typeof msg.payload.command === 'string') cmd = msg.payload.command.toLowerCase().trim();
+        node.on('input', function(msg, send, done) {
+            try {
+                let cmd = '';
+                if (typeof msg.payload === 'string') cmd = msg.payload.toLowerCase().trim();
+                else if (msg.payload && typeof msg.payload.command === 'string') cmd = msg.payload.command.toLowerCase().trim();
 
-            switch (cmd) {
-                case 'connect':
-                    cfg.connectStove();
-                    break;
-                case 'disconnect':
-                    cfg.disconnectStove();
-                    setStatus('grey', 'ring', 'Disconnected manually');
-                    break;
-                case 'get':
-                    cfg.requestInfo();
-                    break;
-                case 'parameters':
-                case 'param':
-                    cfg.requestParameters();
-                    break;
-                default:
-                    node.warn(`mcz-in: Unknown command "${cmd}". Use connect / disconnect / get / parameters`);
+                switch (cmd) {
+                    case 'connect':
+                        cfg.connectStove();
+                        break;
+                    case 'disconnect':
+                        cfg.disconnectStove();
+                        setStatus('grey', 'ring', 'Disconnected manually');
+                        break;
+                    case 'get':
+                        cfg.requestInfo();
+                        break;
+                    case 'parameters':
+                    case 'param':
+                        cfg.requestParameters();
+                        break;
+                    default:
+                        node.warn(`mcz-in: Unknown command "${cmd}". Use connect / disconnect / get / parameters`);
+                }
+                if (done) done();
+            } catch (err) {
+                setStatus('red', 'ring', `Error: ${err.message}`);
+                if (done) done(err); else node.error(err, msg);
             }
         });
 

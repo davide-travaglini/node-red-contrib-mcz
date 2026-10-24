@@ -126,7 +126,9 @@ Commands with a known safe range (`Temperature`, `Boiler_Setpoint`, `Power_Level
 `DuctedFan1`, `DuctedFan2`) are validated before sending — an out-of-range value is rejected
 (`buildCommandString` returns `null`, `mcz-out` logs an error) instead of being sent to the stove.
 `mcz-out` also refuses to send anything while the stove is disconnected, rather than silently
-dropping the command.
+dropping the command. Concurrent requests (`get`/`parameters`/writes, from any combination of
+`mcz-in`/`mcz-out` sharing the same `mcz-config`) are automatically serialized onto the single
+request/reply channel the stove exposes — no manual throttling needed on your side.
 
 **Output:**
 On every successful send, `mcz-out` emits a confirmation message:

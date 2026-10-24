@@ -28,6 +28,14 @@ module.exports = function(RED) {
         node.lastReply = null;
         node._lastRequestType = null; // 'data' | 'parameters' — tags the next 'rispondo' reply
 
+        // Outgoing 'chiedo' requests share a single request/reply channel with the
+        // cloud, so sends are serialized here: only one request is in flight at a
+        // time, which keeps _lastRequestType correctly paired with its reply instead
+        // of being clobbered by a second send issued before the first reply arrives.
+        node._sendQueue = [];
+        node._sendBusy = false;
+        node._sendTimer = null;
+
         let parser = null;
         try {
             const tpl = Templates.get(node.templateType, node.customTemplate);
@@ -85,9 +93,11 @@ module.exports = function(RED) {
                 });
 
                 if (node.interval > 0) {
-                    // Mirrors the Android app: fetch configuration parameters once,
-                    // then start polling live telemetry.
-                    node.requestParameters();
+                    // NOTE: requesting parameters (tipoChiamata 0 / RecuperoParametri) on
+                    // every connect was tried and broke live telemetry entirely — the
+                    // cloud stopped answering 'chiedo' for the rest of the session. Only
+                    // request telemetry automatically; parameters stay available as a
+                    // manual trigger ("parameters"/"param" input on mcz-in).
                     node.requestInfo();
                     if (node.pollTimer) clearInterval(node.pollTimer);
                     node.pollTimer = setInterval(() => node.requestInfo(), node.interval * 1000);
@@ -102,6 +112,9 @@ module.exports = function(RED) {
                 node.connected = false;
                 node.log(`[mcz-config] Disconnected (SN=${node.serialNumber}): ${reason}`);
                 if (node.pollTimer) { clearInterval(node.pollTimer); node.pollTimer = null; }
+                if (node._sendTimer) { clearTimeout(node._sendTimer); node._sendTimer = null; }
+                node._sendQueue = [];
+                node._sendBusy = false;
                 node._emit({ event: 'disconnect', serialNumber: node.serialNumber, reason });
             });
 
@@ -119,6 +132,7 @@ module.exports = function(RED) {
             });
 
             node.socket.on('rispondo', (response) => {
+                node._sendDone();
                 node.lastReply = new Date();
                 const trama = (response && response.stringaRicevuta) || '';
                 if (!trama) return;
@@ -139,51 +153,77 @@ module.exports = function(RED) {
 
         node.disconnectStove = function() {
             if (node.pollTimer) { clearInterval(node.pollTimer); node.pollTimer = null; }
+            if (node._sendTimer) { clearTimeout(node._sendTimer); node._sendTimer = null; }
+            node._sendQueue = [];
+            node._sendBusy = false;
             if (node.socket) {
                 node.socket.removeAllListeners();
+                if (node.socket.io) {
+                    node.socket.io.removeAllListeners('reconnect_attempt');
+                    node.socket.io.removeAllListeners('reconnect_error');
+                }
                 node.socket.disconnect();
                 node.socket = null;
             }
             node.connected = false;
         };
 
+        // Serializes outgoing 'chiedo' requests: at most one in flight at a time
+        // (see note by _sendQueue above). A safety timeout unblocks the queue if
+        // the cloud never answers, so one dropped reply can't wedge future sends.
+        node._sendDone = function() {
+            if (node._sendTimer) { clearTimeout(node._sendTimer); node._sendTimer = null; }
+            node._sendBusy = false;
+            node._processSendQueue();
+        };
+
+        node._processSendQueue = function() {
+            if (node._sendBusy || node._sendQueue.length === 0) return;
+            if (!node.socket || !node.socket.connected) { node._sendQueue = []; return; }
+
+            const job = node._sendQueue.shift();
+            node._sendBusy = true;
+            node._lastRequestType = job.type;
+            node.socket.emit('chiedo', job.payload);
+            node._sendTimer = setTimeout(() => node._sendDone(), 10000);
+        };
+
+        node._enqueueSend = function(type, payload) {
+            if (!node.socket || !node.socket.connected) return false;
+            node._sendQueue.push({ type, payload });
+            node._processSendQueue();
+            return true;
+        };
+
         node.requestInfo = function() {
-            if (node.socket && node.socket.connected) {
-                node._lastRequestType = 'data';
-                node.socket.emit('chiedo', {
-                    serialNumber: node.serialNumber,
-                    macAddress: node.macAddress,
-                    tipoChiamata: 1,
-                    richiesta: 'C|RecuperoInfo'
-                });
-            }
+            node._enqueueSend('data', {
+                serialNumber: node.serialNumber,
+                macAddress: node.macAddress,
+                tipoChiamata: 1,
+                richiesta: 'C|RecuperoInfo'
+            });
         };
 
         // Requests stove configuration parameters (as opposed to live telemetry),
         // same call the Android app makes once after connecting.
         node.requestParameters = function() {
-            if (node.socket && node.socket.connected) {
-                node._lastRequestType = 'parameters';
-                node.socket.emit('chiedo', {
-                    serialNumber: node.serialNumber,
-                    macAddress: node.macAddress,
-                    tipoChiamata: 0,
-                    richiesta: 'RecuperoParametri'
-                });
-                node.log(`[mcz-config] Requested parameters (SN=${node.serialNumber})`);
-            }
+            const queued = node._enqueueSend('parameters', {
+                serialNumber: node.serialNumber,
+                macAddress: node.macAddress,
+                tipoChiamata: 0,
+                richiesta: 'RecuperoParametri'
+            });
+            if (queued) node.log(`[mcz-config] Requested parameters (SN=${node.serialNumber})`);
         };
 
         node.writeCommand = function(command) {
-            if (node.socket && node.socket.connected && command) {
-                node._lastRequestType = 'data';
-                node.socket.emit('chiedo', {
-                    serialNumber: node.serialNumber,
-                    macAddress: node.macAddress,
-                    tipoChiamata: 1,
-                    richiesta: command
-                });
-            }
+            if (!command) return;
+            node._enqueueSend('data', {
+                serialNumber: node.serialNumber,
+                macAddress: node.macAddress,
+                tipoChiamata: 1,
+                richiesta: command
+            });
         };
 
         // Alias kept for callers that prefer a protocol-agnostic name — same
